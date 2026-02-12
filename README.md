@@ -109,7 +109,7 @@ El script `Model/train.py` ejecuta un pipeline en dos bloques: **preparación de
 | 6    | **División**            | División 80% train / 20% test con `train_test_split`, estratificada por `species`, `random_state=42`. |
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f7c338c6-6438-404c-b9e5-78d11538125a" width="80%" alt="imagen" />
+  <img src="https://github.com/user-attachments/assets/f7c338c6-6438-404c-b9e5-78d11538125a" width="100%" alt="imagen" />
 </p>
 
 ### 2. Creación de modelos (3 pasos por modelo)
