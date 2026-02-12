@@ -259,42 +259,6 @@ docker run -p 8989:8989 penguins-api
 El puerto **8989** está declarado en el Dockerfile (`EXPOSE 8989`) y es el puerto por defecto del proceso dentro del contenedor.
 
 ---
-
-## Ejemplos de uso
-
-### 1. Entrenar modelos
-
-```bash
-cd /ruta/al/proyecto/penguins
-python Model/train.py
-```
-
-### 2. Probar la API en local (puerto 8000)
-
-```bash
-uvicorn API.main:app --host 127.0.0.1 --port 8000
-```
-
-
-
-### 3. Usar la API con Docker (puerto 8989)
-
-```bash
-docker run -p 8989:8989 penguins-api
-```
-
-
-
----
-
-## Resumen rápido
-
-| Acción              | Comando |
-|---------------------|--------|
-| Instalar dependencias | `pip install -r requirements.txt` |
-| Entrenar y generar modelos | `python Model/train.py` |
-| Ejecutar API (local) | `uvicorn API.main:app --host 127.0.0.1 --port 8000` |
-| Construir imagen Docker | `docker build -f Docker/Dockerfile -t penguins-api .` |
-| Ejecutar API en Docker | `docker run -p 8989:8989 penguins-api` |
-
-Documentación interactiva de la API: **/docs** (Swagger UI) en la misma base URL donde esté corriendo el servidor.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e31c3cb4-ac39-4ab4-a4e5-9d3e4731695c" width="50%" alt="imagen" />
+</p>
