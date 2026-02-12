@@ -1,1 +1,319 @@
-# penguins
+# Penguins — Clasificación de especies y API
+
+Proyecto de **machine learning** para predecir la especie de pingüinos a partir de medidas morfológicas y contexto (isla, sexo, año). Incluye pipeline de entrenamiento, dos modelos (Random Forest y Regresión Logística), una **API REST** con FastAPI y una **imagen Docker** para desplegar el servicio.
+
+---
+
+## Tabla de contenidos
+
+- [Descripción general](#descripción-general)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Dataset](#dataset)
+- [Requisitos e instalación](#requisitos-e-instalación)
+- [Pipeline de entrenamiento](#pipeline-de-entrenamiento)
+- [Modelos generados](#modelos-generados)
+- [API REST](#api-rest)
+- [Docker](#docker)
+- [Ejemplos de uso](#ejemplos-de-uso)
+
+---
+
+## Descripción general
+
+El flujo del proyecto es:
+
+1. **Dataset** (`Dataset/penguins.csv`): datos de pingüinos con medidas y atributos.
+2. **Entrenamiento** (`Model/train.py`): preparación de datos en 6 pasos, construcción y entrenamiento de dos clasificadores (RF y LR), validación y guardado de los pipelines como `RF.apk` y `LR.apk`.
+3. **API** (`API/main.py`): servicio FastAPI que carga ambos modelos y expone **POST /rf** y **POST /lr** para predecir la especie.
+4. **Docker** (`Docker/`): Dockerfile para construir una imagen que ejecuta la API en el puerto **8989**.
+
+**Especies objetivo:** Adelie, Chinstrap, Gentoo.
+
+---
+
+## Estructura del proyecto
+
+```
+penguins/
+├── README.md              # Este archivo
+├── requirements.txt       # Dependencias Python
+├── Dataset/
+│   └── penguins.csv       # Dataset de entrenamiento
+├── Model/
+│   ├── train.py           # Script de entrenamiento (genera RF.apk y LR.apk)
+│   ├── RF.apk             # Pipeline Random Forest (generado)
+│   └── LR.apk             # Pipeline Regresión Logística (generado)
+├── API/
+│   └── main.py            # Aplicación FastAPI
+└── Docker/
+    ├── Dockerfile         # Imagen para ejecutar la API
+    ├── .dockerignore
+    └── README.md          # Instrucciones de build/run
+```
+
+---
+
+## Dataset
+
+- **Ubicación:** `Dataset/penguins.csv`
+- **Origen:** Palmer Penguins (medidas de pingüinos de Palmer Station, Antarctica).
+
+| Columna            | Tipo   | Descripción                          |
+|--------------------|--------|--------------------------------------|
+| `species`          | texto  | **Target.** Adelie, Chinstrap o Gentoo |
+| `island`           | texto  | Isla: Torgersen, Biscoe o Dream      |
+| `bill_length_mm`   | float  | Longitud del pico (mm)               |
+| `bill_depth_mm`    | float  | Profundidad del pico (mm)            |
+| `flipper_length_mm`| float  | Longitud de la aleta (mm)            |
+| `body_mass_g`      | float  | Masa corporal (g)                    |
+| `sex`              | texto  | male o female                        |
+| `year`             | int    | Año (ej. 2007)                       |
+
+El CSV puede contener valores faltantes (`NA`); el pipeline de entrenamiento los elimina antes de entrenar.
+
+---
+
+## Requisitos e instalación
+
+- **Python:** 3.9 o superior (recomendado 3.11).
+- **Dependencias:**
+
+```bash
+pip install -r requirements.txt
+```
+
+Contenido de `requirements.txt`:
+
+- `pandas` — manipulación de datos
+- `numpy` — operaciones numéricas
+- `scikit-learn` — modelos y preprocesado
+- `joblib` — serialización de modelos
+- `fastapi` — API REST
+- `uvicorn[standard]` — servidor ASGI
+
+---
+
+## Pipeline de entrenamiento
+
+El script `Model/train.py` ejecuta un pipeline en dos bloques: **preparación de datos** (6 pasos) y **creación de modelos** (3 pasos por modelo).
+
+### 1. Preparación de datos (6 pasos)
+
+| Paso | Nombre                  | Descripción |
+|------|-------------------------|-------------|
+| 1    | **Carga**               | Lectura de `Dataset/penguins.csv`. |
+| 2    | **Limpieza**            | Reemplazo de `"NA"` por nulos y eliminación de filas con valores faltantes. |
+| 3    | **Transformación**      | Conversión de columnas numéricas a tipo numérico y eliminación de filas que queden con nulos. |
+| 4    | **Validación**          | Comprobación de que no hay nulos en `species`, que hay al menos 2 clases y que queda un volumen de datos válido. |
+| 5    | **Ingeniería de características** | Definición de **X** (todas las columnas salvo `species`) y **y** (`species`). Preprocesado: escalado (StandardScaler) para variables numéricas y OneHotEncoder para categóricas (`island`, `sex`). |
+| 6    | **División**            | División 80% train / 20% test con `train_test_split`, estratificada por `species`, `random_state=42`. |
+
+### 2. Creación de modelos (3 pasos por modelo)
+
+Para **Random Forest (RF)** y **Regresión Logística (LR)**:
+
+| Paso | Nombre            | Descripción |
+|------|-------------------|-------------|
+| 1    | **Construcción**  | Definición del estimador: `RandomForestClassifier(n_estimators=100)` o `LogisticRegression(max_iter=1000)`. |
+| 2    | **Entrenamiento** | Pipeline: preprocesador (ColumnTransformer) + clasificador; se ajusta con `X_train`, `y_train`. |
+| 3    | **Validación**    | Predicción sobre `X_test`, cálculo de accuracy, classification report y matriz de confusión. |
+
+Al final se guardan los pipelines completos (preprocesador + modelo) con `joblib` en:
+
+- `Model/RF.apk`
+- `Model/LR.apk`
+
+### Ejecutar el entrenamiento
+
+Desde la **raíz del proyecto**:
+
+```bash
+python Model/train.py
+```
+
+O, si usas un entorno virtual:
+
+```bash
+python3 Model/train.py
+```
+
+Es necesario que exista `Dataset/penguins.csv`. Tras ejecutar, en `Model/` deben aparecer `RF.apk` y `LR.apk`; la API los utiliza para servir las predicciones.
+
+---
+
+## Modelos generados
+
+- **RF.apk:** pipeline de Random Forest (preprocesador + `RandomForestClassifier`). Archivo serializado con `joblib`, extensión `.apk` por convención del proyecto (no es un APK de Android).
+- **LR.apk:** pipeline de Regresión Logística (preprocesador + `LogisticRegression`), mismo formato.
+
+Ambos reciben las mismas **features** en el mismo orden que en entrenamiento: `island`, `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`, `body_mass_g`, `sex`, `year`. La salida es la **especie** predicha: Adelie, Chinstrap o Gentoo.
+
+---
+
+## API REST
+
+La API está implementada en **FastAPI** en `API/main.py`. Al arrancar, carga `Model/RF.apk` y `Model/LR.apk` y expone dos endpoints de predicción.
+
+### Arranque en local
+
+Desde la raíz del proyecto:
+
+```bash
+uvicorn API.main:app --host 127.0.0.1 --port 8000
+```
+
+O en otro puerto, por ejemplo 8989:
+
+```bash
+uvicorn API.main:app --host 127.0.0.1 --port 8989
+```
+
+- **Documentación interactiva (Swagger):** http://127.0.0.1:8000/docs  
+- **Raíz:** http://127.0.0.1:8000/
+
+### Endpoints
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET    | `/`  | Mensaje de bienvenida y enlaces a la API y a los endpoints. |
+| POST   | `/rf`| Predicción usando el modelo **Random Forest** (RF.apk). |
+| POST   | `/lr`| Predicción usando el modelo **Regresión Logística** (LR.apk). |
+
+### Cuerpo de la petición (POST /rf y POST /lr)
+
+JSON con las mismas variables que en el dataset (todas obligatorias):
+
+```json
+{
+  "island": "Biscoe",
+  "bill_length_mm": 39.1,
+  "bill_depth_mm": 18.7,
+  "flipper_length_mm": 181,
+  "body_mass_g": 3750,
+  "sex": "male",
+  "year": 2007
+}
+```
+
+Restricciones útiles:
+
+- `island`: uno de `"Torgersen"`, `"Biscoe"`, `"Dream"`.
+- `sex`: `"male"` o `"female"`.
+- `year`: entero (ej. 2007, 2008, 2009).
+
+### Respuesta
+
+Ejemplo para **POST /rf** o **POST /lr**:
+
+```json
+{
+  "model": "RF",
+  "species": "Adelie"
+}
+```
+
+O con LR:
+
+```json
+{
+  "model": "LR",
+  "species": "Adelie"
+}
+```
+
+En caso de error (datos inválidos o modelo no cargado), la API devuelve códigos 422 o 503 con un mensaje en el cuerpo.
+
+---
+
+## Docker
+
+En `Docker/` se encuentra todo lo necesario para construir una **imagen** que ejecuta la API y exponerla en el puerto **8989**.
+
+### Construcción de la imagen
+
+Desde la **raíz del proyecto** (el contexto de build es el directorio raíz):
+
+```bash
+docker build -f Docker/Dockerfile -t penguins-api .
+```
+
+La imagen incluye:
+
+- Python 3.11-slim
+- Dependencias de `requirements.txt`
+- Código de `API/`
+- Modelos `Model/RF.apk` y `Model/LR.apk`
+
+### Ejecución del contenedor
+
+```bash
+docker run -p 8989:8989 penguins-api
+```
+
+- La API queda disponible en **http://localhost:8989**.
+- Documentación: **http://localhost:8989/docs**.
+- Endpoints de predicción: **POST http://localhost:8989/rf** y **POST http://localhost:8989/lr**.
+
+El puerto **8989** está declarado en el Dockerfile (`EXPOSE 8989`) y es el puerto por defecto del proceso dentro del contenedor.
+
+---
+
+## Ejemplos de uso
+
+### 1. Entrenar modelos
+
+```bash
+cd /ruta/al/proyecto/penguins
+python Model/train.py
+```
+
+### 2. Probar la API en local (puerto 8000)
+
+```bash
+uvicorn API.main:app --host 127.0.0.1 --port 8000
+```
+
+En otra terminal:
+
+```bash
+# Raíz
+curl http://127.0.0.1:8000/
+
+# Predicción con Random Forest
+curl -X POST http://127.0.0.1:8000/rf \
+  -H "Content-Type: application/json" \
+  -d '{"island":"Biscoe","bill_length_mm":39.1,"bill_depth_mm":18.7,"flipper_length_mm":181,"body_mass_g":3750,"sex":"male","year":2007}'
+
+# Predicción con Regresión Logística
+curl -X POST http://127.0.0.1:8000/lr \
+  -H "Content-Type: application/json" \
+  -d '{"island":"Biscoe","bill_length_mm":39.1,"bill_depth_mm":18.7,"flipper_length_mm":181,"body_mass_g":3750,"sex":"male","year":2007}'
+```
+
+### 3. Usar la API con Docker (puerto 8989)
+
+```bash
+docker run -p 8989:8989 penguins-api
+```
+
+Luego:
+
+```bash
+curl http://localhost:8989/
+curl -X POST http://localhost:8989/rf -H "Content-Type: application/json" \
+  -d '{"island":"Dream","bill_length_mm":45.2,"bill_depth_mm":16.8,"flipper_length_mm":210,"body_mass_g":4200,"sex":"female","year":2008}'
+```
+
+---
+
+## Resumen rápido
+
+| Acción              | Comando |
+|---------------------|--------|
+| Instalar dependencias | `pip install -r requirements.txt` |
+| Entrenar y generar modelos | `python Model/train.py` |
+| Ejecutar API (local) | `uvicorn API.main:app --host 127.0.0.1 --port 8000` |
+| Construir imagen Docker | `docker build -f Docker/Dockerfile -t penguins-api .` |
+| Ejecutar API en Docker | `docker run -p 8989:8989 penguins-api` |
+
+Documentación interactiva de la API: **/docs** (Swagger UI) en la misma base URL donde esté corriendo el servidor.
