@@ -159,6 +159,7 @@ uvicorn API.main:app --host 127.0.0.1 --port 8000
 
 - **Documentación interactiva (Swagger):** http://127.0.0.1:8000/docs  
 - **Raíz:** http://127.0.0.1:8000/
+<img width="1222" height="662" alt="image" src="https://github.com/user-attachments/assets/725b5fe9-316d-44f8-8f7f-fbd4f02b7405" />
 
 ### Endpoints
 
