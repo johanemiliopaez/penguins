@@ -109,7 +109,7 @@ El script `Model/train.py` ejecuta un pipeline en dos bloques: **preparación de
 | 6    | **División**            | División 80% train / 20% test con `train_test_split`, estratificada por `species`, `random_state=42`. |
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f7c338c6-6438-404c-b9e5-78d11538125a" width="50%" alt="imagen" />
+  <img src="https://github.com/user-attachments/assets/f7c338c6-6438-404c-b9e5-78d11538125a" width="80%" alt="imagen" />
 </p>
 
 ### 2. Creación de modelos (3 pasos por modelo)
@@ -147,7 +147,7 @@ Tras ejecutar, en `Model/` deben aparecer `RF.pkl` y `LR.pkl`; la API los utiliz
 Ambos reciben las mismas **features** en el mismo orden que en entrenamiento: `island`, `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`, `body_mass_g`, `sex`, `year`. La salida es la **especie** predicha: Adelie, Chinstrap o Gentoo.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/fa24b972-41df-45ce-abfd-e4f49b9bf5bb" width="50%" alt="imagen" />
+  <img src="https://github.com/user-attachments/assets/fa24b972-41df-45ce-abfd-e4f49b9bf5bb" width="80%" alt="imagen" />
 </p>
 ---
 
