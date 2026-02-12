@@ -14,7 +14,7 @@ Proyecto de **machine learning** para predecir la especie de pingüinos a partir
 - [Modelos generados](#modelos-generados)
 - [API REST](#api-rest)
 - [Docker](#docker)
-- [Ejemplos de uso](#ejemplos-de-uso)
+
 
 ---
 
