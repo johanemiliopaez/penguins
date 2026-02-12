@@ -131,13 +131,7 @@ Desde la **raíz del proyecto**:
 python Model/train.py
 ```
 
-O, si usas un entorno virtual:
-
-```bash
-python3 Model/train.py
-```
-
-Es necesario que exista `Dataset/penguins.csv`. Tras ejecutar, en `Model/` deben aparecer `RF.pkl` y `LR.pkl`; la API los utiliza para servir las predicciones.
+Tras ejecutar, en `Model/` deben aparecer `RF.pkl` y `LR.pkl`; la API los utiliza para servir las predicciones.
 
 ---
 
