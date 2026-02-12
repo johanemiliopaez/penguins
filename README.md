@@ -258,7 +258,10 @@ docker run -p 8989:8989 penguins-api
 
 El puerto **8989** está declarado en el Dockerfile (`EXPOSE 8989`) y es el puerto por defecto del proceso dentro del contenedor.
 
----
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/e31c3cb4-ac39-4ab4-a4e5-9d3e4731695c" width="50%" alt="imagen" />
+  <img src="https://github.com/user-attachments/assets/e31c3cb4-ac39-4ab4-a4e5-9d3e4731695c" width="80%" alt="imagen" />
 </p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/edf2c3e8-fff0-41cd-9b8a-e367e39799ba" width="80%" alt="imagen" />
+</p>
+---
