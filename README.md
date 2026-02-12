@@ -156,11 +156,6 @@ Desde la raíz del proyecto:
 uvicorn API.main:app --host 127.0.0.1 --port 8000
 ```
 
-O en otro puerto, por ejemplo 8989:
-
-```bash
-uvicorn API.main:app --host 127.0.0.1 --port 8989
-```
 
 - **Documentación interactiva (Swagger):** http://127.0.0.1:8000/docs  
 - **Raíz:** http://127.0.0.1:8000/
@@ -267,22 +262,7 @@ python Model/train.py
 uvicorn API.main:app --host 127.0.0.1 --port 8000
 ```
 
-En otra terminal:
 
-```bash
-# Raíz
-curl http://127.0.0.1:8000/
-
-# Predicción con Random Forest
-curl -X POST http://127.0.0.1:8000/rf \
-  -H "Content-Type: application/json" \
-  -d '{"island":"Biscoe","bill_length_mm":39.1,"bill_depth_mm":18.7,"flipper_length_mm":181,"body_mass_g":3750,"sex":"male","year":2007}'
-
-# Predicción con Regresión Logística
-curl -X POST http://127.0.0.1:8000/lr \
-  -H "Content-Type: application/json" \
-  -d '{"island":"Biscoe","bill_length_mm":39.1,"bill_depth_mm":18.7,"flipper_length_mm":181,"body_mass_g":3750,"sex":"male","year":2007}'
-```
 
 ### 3. Usar la API con Docker (puerto 8989)
 
@@ -290,13 +270,7 @@ curl -X POST http://127.0.0.1:8000/lr \
 docker run -p 8989:8989 penguins-api
 ```
 
-Luego:
 
-```bash
-curl http://localhost:8989/
-curl -X POST http://localhost:8989/rf -H "Content-Type: application/json" \
-  -d '{"island":"Dream","bill_length_mm":45.2,"bill_depth_mm":16.8,"flipper_length_mm":210,"body_mass_g":4200,"sex":"female","year":2008}'
-```
 
 ---
 
