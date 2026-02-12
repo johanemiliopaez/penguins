@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar API y modelos (contexto de build = raíz del proyecto)
 COPY API/ ./API/
-COPY Model/RF.apk Model/LR.apk ./Model/
+COPY Model/RF.pkl Model/LR.pkl ./Model/
 
 # Puerto donde se expone la API
 EXPOSE 8989

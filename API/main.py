@@ -13,8 +13,8 @@ from pydantic import BaseModel, Field
 API_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(API_DIR)
 MODEL_DIR = os.path.join(PROJECT_ROOT, "Model")
-RF_PATH = os.path.join(MODEL_DIR, "RF.apk")
-LR_PATH = os.path.join(MODEL_DIR, "LR.apk")
+RF_PATH = os.path.join(MODEL_DIR, "RF.pkl")
+LR_PATH = os.path.join(MODEL_DIR, "LR.pkl")
 
 app = FastAPI(
     title="Penguins Species API",
@@ -67,7 +67,7 @@ def predict_with_model(model, features: PenguinFeatures) -> str:
 
 @app.post("/rf")
 def predict_rf(features: PenguinFeatures):
-    """Predicción de especie usando el modelo Random Forest (RF.apk)."""
+    """Predicción de especie usando el modelo Random Forest (RF.pkl)."""
     if model_rf is None:
         raise HTTPException(status_code=503, detail="Modelo RF no cargado")
     try:
@@ -79,7 +79,7 @@ def predict_rf(features: PenguinFeatures):
 
 @app.post("/lr")
 def predict_lr(features: PenguinFeatures):
-    """Predicción de especie usando el modelo Logistic Regression (LR.apk)."""
+    """Predicción de especie usando el modelo Logistic Regression (LR.pkl)."""
     if model_lr is None:
         raise HTTPException(status_code=503, detail="Modelo LR no cargado")
     try:

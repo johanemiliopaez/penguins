@@ -138,8 +138,8 @@ def step_validate_model(pipeline, X_test, y_test, model_name):
     return acc
 
 
-def save_model_as_apk(pipeline, filename):
-    """Guarda el pipeline serializado con extensión .apk (archivo de modelo)."""
+def save_model_as_pkl(pipeline, filename):
+    """Guarda el pipeline serializado con extensión .pkl (pickle/joblib)."""
     path = os.path.join(MODEL_DIR, filename)
     joblib.dump(pipeline, path)
     print(f"Modelo guardado: {path}")
@@ -168,10 +168,10 @@ def main():
         estimator = step_build(model_name)
         pipeline = step_train(estimator, preprocessor, X_train, y_train, model_name)
         step_validate_model(pipeline, X_test, y_test, model_name)
-        save_model_as_apk(pipeline, f"{model_name}.apk")
+        save_model_as_pkl(pipeline, f"{model_name}.pkl")
 
     print("\n" + "=" * 60)
-    print("RF.apk y LR.apk generados en el directorio Model.")
+    print("RF.pkl y LR.pkl generados en el directorio Model.")
     print("=" * 60)
 
 

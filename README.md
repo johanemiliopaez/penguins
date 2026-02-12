@@ -23,7 +23,7 @@ Proyecto de **machine learning** para predecir la especie de pingüinos a partir
 El flujo del proyecto es:
 
 1. **Dataset** (`Dataset/penguins.csv`): datos de pingüinos con medidas y atributos.
-2. **Entrenamiento** (`Model/train.py`): preparación de datos en 6 pasos, construcción y entrenamiento de dos clasificadores (RF y LR), validación y guardado de los pipelines como `RF.apk` y `LR.apk`.
+2. **Entrenamiento** (`Model/train.py`): preparación de datos en 6 pasos, construcción y entrenamiento de dos clasificadores (RF y LR), validación y guardado de los pipelines como `RF.pkl` y `LR.pkl`.
 3. **API** (`API/main.py`): servicio FastAPI que carga ambos modelos y expone **POST /rf** y **POST /lr** para predecir la especie.
 4. **Docker** (`Docker/`): Dockerfile para construir una imagen que ejecuta la API en el puerto **8989**.
 
@@ -40,9 +40,9 @@ penguins/
 ├── Dataset/
 │   └── penguins.csv       # Dataset de entrenamiento
 ├── Model/
-│   ├── train.py           # Script de entrenamiento (genera RF.apk y LR.apk)
-│   ├── RF.apk             # Pipeline Random Forest (generado)
-│   └── LR.apk             # Pipeline Regresión Logística (generado)
+│   ├── train.py           # Script de entrenamiento (genera RF.pkl y LR.pkl)
+│   ├── RF.pkl             # Pipeline Random Forest (generado)
+│   └── LR.pkl             # Pipeline Regresión Logística (generado)
 ├── API/
 │   └── main.py            # Aplicación FastAPI
 └── Docker/
@@ -120,8 +120,8 @@ Para **Random Forest (RF)** y **Regresión Logística (LR)**:
 
 Al final se guardan los pipelines completos (preprocesador + modelo) con `joblib` en:
 
-- `Model/RF.apk`
-- `Model/LR.apk`
+- `Model/RF.pkl`
+- `Model/LR.pkl`
 
 ### Ejecutar el entrenamiento
 
@@ -137,14 +137,14 @@ O, si usas un entorno virtual:
 python3 Model/train.py
 ```
 
-Es necesario que exista `Dataset/penguins.csv`. Tras ejecutar, en `Model/` deben aparecer `RF.apk` y `LR.apk`; la API los utiliza para servir las predicciones.
+Es necesario que exista `Dataset/penguins.csv`. Tras ejecutar, en `Model/` deben aparecer `RF.pkl` y `LR.pkl`; la API los utiliza para servir las predicciones.
 
 ---
 
 ## Modelos generados
 
-- **RF.apk:** pipeline de Random Forest (preprocesador + `RandomForestClassifier`). Archivo serializado con `joblib`, extensión `.apk` por convención del proyecto (no es un APK de Android).
-- **LR.apk:** pipeline de Regresión Logística (preprocesador + `LogisticRegression`), mismo formato.
+- **RF.pkl:** pipeline de Random Forest (preprocesador + `RandomForestClassifier`). Archivo serializado con `joblib` (extensión `.pkl`).
+- **LR.pkl:** pipeline de Regresión Logística (preprocesador + `LogisticRegression`), mismo formato.
 
 Ambos reciben las mismas **features** en el mismo orden que en entrenamiento: `island`, `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`, `body_mass_g`, `sex`, `year`. La salida es la **especie** predicha: Adelie, Chinstrap o Gentoo.
 
@@ -152,7 +152,7 @@ Ambos reciben las mismas **features** en el mismo orden que en entrenamiento: `i
 
 ## API REST
 
-La API está implementada en **FastAPI** en `API/main.py`. Al arrancar, carga `Model/RF.apk` y `Model/LR.apk` y expone dos endpoints de predicción.
+La API está implementada en **FastAPI** en `API/main.py`. Al arrancar, carga `Model/RF.pkl` y `Model/LR.pkl` y expone dos endpoints de predicción.
 
 ### Arranque en local
 
@@ -176,8 +176,8 @@ uvicorn API.main:app --host 127.0.0.1 --port 8989
 | Método | Ruta | Descripción |
 |--------|------|-------------|
 | GET    | `/`  | Mensaje de bienvenida y enlaces a la API y a los endpoints. |
-| POST   | `/rf`| Predicción usando el modelo **Random Forest** (RF.apk). |
-| POST   | `/lr`| Predicción usando el modelo **Regresión Logística** (LR.apk). |
+| POST   | `/rf`| Predicción usando el modelo **Random Forest** (RF.pkl). |
+| POST   | `/lr`| Predicción usando el modelo **Regresión Logística** (LR.pkl). |
 
 ### Cuerpo de la petición (POST /rf y POST /lr)
 
@@ -242,7 +242,7 @@ La imagen incluye:
 - Python 3.11-slim
 - Dependencias de `requirements.txt`
 - Código de `API/`
-- Modelos `Model/RF.apk` y `Model/LR.apk`
+- Modelos `Model/RF.pkl` y `Model/LR.pkl`
 
 ### Ejecución del contenedor
 
