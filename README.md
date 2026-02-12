@@ -212,6 +212,10 @@ O con LR:
 }
 ```
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d91ccd8e-bb6e-432a-8cb8-63ded279841c" width="50%" alt="imagen" />
+</p>
+
 En caso de error (datos inválidos o modelo no cargado), la API devuelve códigos 422 o 503 con un mensaje en el cuerpo.
 
 ---
