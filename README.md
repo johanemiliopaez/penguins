@@ -1,5 +1,5 @@
 # Taller 1: 
-## Modelo Penguins Clasificación de especies y API - FastApi - Docker
+## Modelo Penguins Clasificación de especies - FastApi - Docker
 
 Proyecto de **machine learning** para predecir la especie de pingüinos a partir de medidas morfológicas y contexto (isla, sexo, año). Incluye pipeline de entrenamiento, dos modelos (Random Forest y Regresión Logística), una **API REST** con FastAPI y una **imagen Docker** para desplegar el servicio.
 
