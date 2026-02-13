@@ -49,7 +49,7 @@ penguins/
 └── Docker/
     ├── Dockerfile         # Imagen para ejecutar la API
     ├── .dockerignore
-    └── README.md          # Instrucciones de build/run
+    
 ```
 
 ---
